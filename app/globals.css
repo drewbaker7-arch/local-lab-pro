@@ -1,26 +1,206 @@
 @import "tailwindcss";
 
+/**
+ * Design System — LocalLab.pro
+ *
+ * Inspired by andreaskruszakin.com:
+ * - Solid sky-blue page canvas (#a5dbff) — the entire page floats on this
+ * - Warm cream content cards (#fbf9f5) sit on the blue like workshop papers
+ * - Dark near-black text for maximum legibility (#0d0d0d)
+ * - Teal (#2a9d8f) as the single action-oriented accent
+ * - Warm yellows, soft pink, and muted blues as supporting palette
+ *
+ * Architecture:
+ * 1. CSS custom properties (raw values, used by @theme)
+ * 2. @theme inline block (makes values available as Tailwind utilities)
+ * 3. Base body styles
+ * 4. Animation keyframes + utility classes
+ * 5. Noise overlay helper
+ */
+
+/* ─── Raw design tokens ──────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Page canvas — the signature solid sky blue that everything floats on */
+  --page-bg: #a5dbff;
+
+  /* Card / section surfaces — warm cream, not cold white */
+  --cream: #fbf9f5;
+  --cream-dark: #f0eeeb;    /* slightly darker cream for borders, placeholders */
+  --cream-yellow: #ffffe6;  /* warm yellow tint for highlighted pricing cards */
+  --yellow: #fbf5bc;        /* warmer yellow accent */
+  --yellow-muted: #ededd8;  /* muted warm yellow for tags, chips */
+
+  /* White — pure white surface for maximum contrast areas */
+  --white: #ffffff;
+
+  /* Dark surface — for inverted/dark sections, footers (named "charcoal" to avoid Tailwind v4 "dark:" prefix conflict) */
+  --charcoal: #121212;
+
+  /* Soft pink — for decorative accents, highlights */
+  --pink: #fdb7b7;
+
+  /* Muted blue accents — sit comfortably on the cream cards */
+  --blue-muted: #94c5e5;    /* medium muted blue */
+  --blue-soft: #8ad0ff;     /* slightly brighter muted blue */
+
+  /* ── Text hierarchy ── */
+  --text-primary: #0d0d0d;   /* near-black, used for headings and bold body */
+  --text-secondary: #212121; /* dark gray for standard body text */
+  --text-muted: #454545;     /* muted gray for supporting text, labels */
+  --text-subtle: #8a8a8a;    /* subtle gray for placeholders, disabled states */
+  --text-on-dark: #f5f5f5;   /* light text for use on dark (#121212) backgrounds */
+
+  /* ── Teal accent — the single action color ── */
+  --teal: #2a9d8f;           /* primary CTA, checkmarks, highlights */
+  --teal-hover: #1f7a6e;     /* darker teal for hover states */
+
+  /* ── Borders ── */
+  --border: #f0eeeb;         /* light cream border for cards on cream bg */
+  --border-strong: #e8e4df;  /* slightly stronger border for emphasis */
 }
 
+/* ─── Tailwind v4 @theme inline ─────────────────────────────────────────── */
+/*
+ * Exposes every token as a Tailwind utility:
+ *   bg-page-bg, text-text-primary, border-border, etc.
+ * Font variables are declared here so Tailwind knows about them,
+ * but actual font loading happens in layout.tsx via next/font/google.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Page background */
+  --color-page-bg: var(--page-bg);
+
+  /* Surfaces */
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+  --color-cream-yellow: var(--cream-yellow);
+  --color-yellow: var(--yellow);
+  --color-yellow-muted: var(--yellow-muted);
+  --color-white: var(--white);
+  --color-charcoal: var(--charcoal);
+  --color-pink: var(--pink);
+  --color-blue-muted: var(--blue-muted);
+  --color-blue-soft: var(--blue-soft);
+
+  /* Text */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+  --color-text-on-dark: var(--text-on-dark);
+
+  /* Teal accent */
+  --color-teal: var(--teal);
+  --color-teal-hover: var(--teal-hover);
+
+  /* Borders */
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  /*
+   * Font families — variables are injected by next/font/google in layout.tsx.
+   * Mapping them here allows `font-heading` and `font-body` Tailwind utilities.
+   */
+  --font-heading: var(--font-bricolage), "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base body styles ───────────────────────────────────────────────────── */
+body {
+  /*
+   * The solid sky-blue canvas. Every section floats on this as a cream card.
+   * This is the defining characteristic of the design.
+   */
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-family: var(--font-body), "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+
+/*
+ * fadeInUp — used on section entry, triggered via .animate-fade-in-up.
+ * Keeps the "staggered reveal" feel warm and unobtrusive.
+ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease-out both;
+}
+
+/*
+ * gentleFloat — for hero imagery or decorative elements.
+ * Slow, organic motion; reinforces the "workshop" warmth.
+ */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: gentleFloat 6s ease-in-out infinite;
+}
+
+/*
+ * heroEntrance — staggered fade-in + slide-up used by the Hero section.
+ * Each child applies a different animation-delay via inline style or
+ * the delay utility classes below. fill-mode: both ensures elements
+ * stay invisible before their delay kicks in and visible after.
+ */
+@keyframes heroEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-enter {
+  animation: heroEntrance 0.6s ease-out both;
+}
+
+/* Staggered delay utilities for hero entrance sequencing */
+.hero-delay-1 { animation-delay: 0.1s; }
+.hero-delay-2 { animation-delay: 0.2s; }
+.hero-delay-3 { animation-delay: 0.35s; }
+.hero-delay-4 { animation-delay: 0.5s; }
+.hero-delay-5 { animation-delay: 0.65s; }
+
+/* ─── Noise texture overlay ──────────────────────────────────────────────── */
+/*
+ * Adds a subtle grain layer on top of any element with class `noise-overlay`.
+ * The very low opacity (0.03) just takes the edge off flat digital colours
+ * and gives the impression of texture — consistent with the workshop aesthetic.
+ * Requires position: relative on the parent element.
+ */
+.noise-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Scrollbar hide utility ────────────────────────────────────────────── */
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
