@@ -3,31 +3,35 @@
 /**
  * CustomSolutions — LocalLab.pro
  *
- * A staggered scroll-reveal section showcasing custom digital tools
- * and automations available beyond standard websites.
- *
- * Adapted from a FeatureHighlight pattern: each feature line animates
- * in sequentially with a spring-based slide-up + fade, creating an
- * engaging "typing out a list" feel as the section scrolls into view.
+ * A scroll-triggered section showcasing custom digital tools and automations
+ * available beyond standard websites. Each feature line types out left-to-right
+ * with a staggered start delay, creating a cascading typewriter effect.
  *
  * Design decisions:
- * - SectionWrapper card={true}: cream card on the gradient canvas.
+ * - SectionWrapper card={false}: sits on the gradient canvas, no cream card.
  * - Emojis are used inline as friendly, recognisable visual markers —
  *   no icon library needed, universally supported.
- * - font-heading (Bricolage Grotesque) at text-2xl for the feature
+ * - font-heading (Bricolage Grotesque) at text-xl for the feature
  *   lines gives them editorial weight, not just a boring bullet list.
- * - Stagger delay of 0.08s keeps the cascade feeling fast and fluid
- *   rather than sluggish.
- * - whileInView trigger with once:true — animates on first scroll
- *   into view, doesn't re-trigger.
+ * - useInView (framer-motion) detects when the section scrolls into the
+ *   viewport. Only then do the Typewriter components mount, ensuring the
+ *   typing animation plays while the text is visible — not while it's
+ *   offscreen and invisible.
+ * - Each line's Typewriter has a staggered startDelay (i * 400ms) so
+ *   they cascade one after another rather than all typing at once.
+ * - Cursor hides after each line finishes typing so it doesn't clutter.
+ * - The headline and label use Framer Motion slide-up animations for
+ *   a polished entrance before the typewriter cascade begins.
  */
 
-import { motion, Variants } from "framer-motion";
+import { useRef } from "react";
+import { motion, Variants, useInView } from "framer-motion";
 import { BOOKING_URL } from "../lib/constants";
 import { Button } from "./ui/Button";
 import { SectionWrapper } from "./ui/SectionWrapper";
+import { Typewriter } from "./ui/typewriter-text";
 
-/* ─── Animation variants ────────────────────────────────────────────────── */
+/* ─── Animation variants (for label, headline, and CTA) ───────────────── */
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -66,9 +70,33 @@ const FEATURES = [
   "Automate a repetitive task ⚙️ and never do it manually again.",
 ];
 
+/**
+ * Delay between each feature line starting to type (ms).
+ * 400ms creates a fast cascade where multiple lines can be
+ * typing simultaneously — feels energetic and dynamic.
+ */
+const LINE_STAGGER_MS = 400;
+
+/** Characters per second for each Typewriter line. */
+const TYPING_SPEED_MS = 40;
+
 /* ─── Component ─────────────────────────────────────────────────────────── */
 
 export function CustomSolutions() {
+  /*
+   * useInView tracks whether the feature list container has entered the
+   * viewport. We use this to conditionally render the Typewriter components
+   * so they only start typing when actually visible on screen.
+   *
+   * once: true — after the section enters view, it stays "in view" forever.
+   * This prevents the typewriters from re-mounting on subsequent scrolls.
+   *
+   * margin: "-80px" — triggers slightly before the element reaches the
+   * viewport edge, so the typing starts as the user is scrolling toward it.
+   */
+  const featureListRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(featureListRef, { once: true, margin: "-80px" });
+
   return (
     <SectionWrapper id="custom" card={false}>
       <motion.div
@@ -95,16 +123,30 @@ export function CustomSolutions() {
           Want to do something more custom?
         </motion.h2>
 
-        {/* Feature list — each line staggers in */}
-        <div className="mb-12 flex flex-col space-y-3">
+        {/* Feature list — each line types out left-to-right when the section
+         * scrolls into view. Typewriter components only mount after isInView
+         * becomes true, so their startDelay stagger works from that moment.
+         * Before the section is in view, static placeholder text is hidden
+         * so the layout height is reserved. */}
+        <div ref={featureListRef} className="mb-12 flex flex-col space-y-3">
           {FEATURES.map((feature, i) => (
-            <motion.p
+            <p
               key={i}
-              variants={itemVariants}
               className="font-heading text-lg font-medium leading-relaxed text-text-secondary md:text-xl"
             >
-              {feature}
-            </motion.p>
+              {isInView ? (
+                <Typewriter
+                  text={feature}
+                  speed={TYPING_SPEED_MS}
+                  startDelay={i * LINE_STAGGER_MS}
+                  hideCursorOnComplete={true}
+                  cursor="|"
+                />
+              ) : (
+                /* Invisible placeholder to reserve line height before typing starts */
+                <span className="invisible">{feature}</span>
+              )}
+            </p>
           ))}
         </div>
 

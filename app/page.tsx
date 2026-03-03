@@ -27,12 +27,16 @@ import { HowItWorks } from "./components/HowItWorks";
 import { CustomSolutions } from "./components/CustomSolutions";
 import { Portfolio } from "./components/Portfolio";
 import { Footer } from "./components/Footer";
+import { StickyBookCTA } from "./components/StickyBookCTA";
 
 export default function Home() {
   return (
     <>
       {/* Announcement ticker — fixed at the very top, above the navbar */}
       <AnnouncementTicker />
+
+      {/* Sticky mobile CTA — slides up from bottom when hero CTA scrolls out of view */}
+      <StickyBookCTA />
 
       {/* Sticky navigation — rendered outside <main> so it overlays all sections */}
       <Navbar />

@@ -34,7 +34,7 @@ export function Hero() {
      * - pt-36 md:pt-44: clears fixed navbar (64px) plus breathing room.
      * - pb-20 md:pb-28: transitions cleanly into the first cream card.
      */
-    <section className="noise-overlay relative overflow-hidden pt-44 pb-20 md:pt-52 md:pb-28">
+    <section className="noise-overlay relative overflow-hidden pt-28 pb-12 md:pt-52 md:pb-28">
 
       {/* ── Decorative: radial gradient top shade ──────────────────────── */}
       {/*
@@ -84,8 +84,8 @@ export function Hero() {
          * Centered rounded photo with white border and soft shadow.
          * Replace with an <Image> when a real photo is available.
          */}
-        <div className="animate-hero-enter hero-delay-1 mb-6 inline-block">
-          <div className="mx-auto h-32 w-32 overflow-hidden rounded-2xl border-4 border-white shadow-[0_8px_40px_rgba(13,13,13,0.12)] md:h-40 md:w-40">
+        <div className="animate-hero-enter hero-delay-1 mb-3 md:mb-6 inline-block">
+          <div className="mx-auto h-24 w-24 overflow-hidden rounded-2xl border-4 border-white shadow-[0_8px_40px_rgba(13,13,13,0.12)] md:h-40 md:w-40">
             <img
               src="/images/drew.webp"
               alt="Drew Baker — founder of LocalLab.pro"
@@ -95,7 +95,7 @@ export function Hero() {
         </div>
 
         {/* ── Friendly intro line ────────────────────────────────────── */}
-        <p className="animate-hero-enter hero-delay-2 mb-4 font-body text-base text-text-muted md:text-lg">
+        <p className="animate-hero-enter hero-delay-2 mb-2 md:mb-4 font-body text-base text-text-muted md:text-lg">
           Hi, I&apos;m Drew
         </p>
 
@@ -106,28 +106,27 @@ export function Hero() {
          * blue canvas.
          */}
         <h1
-          className="animate-hero-enter hero-delay-3 mb-6 font-heading text-4xl font-bold italic leading-[1.15] tracking-tight text-text-primary md:text-5xl lg:text-6xl"
+          className="animate-hero-enter hero-delay-3 mb-3 md:mb-6 font-heading text-4xl font-bold italic leading-[1.15] tracking-tight text-text-primary md:text-5xl lg:text-6xl"
           style={{ textShadow: "0 0 50px rgba(13,13,13,0.15)" }}
         >
           I help local businesses get the tech they actually need.
         </h1>
 
         {/* ── Body copy ──────────────────────────────────────────────── */}
-        <p className="animate-hero-enter hero-delay-4 mx-auto mb-10 max-w-xl font-body text-base leading-relaxed text-text-secondary md:text-lg">
+        <p className="animate-hero-enter hero-delay-4 mx-auto mb-6 md:mb-10 max-w-xl font-body text-base leading-relaxed text-text-secondary md:text-lg">
           I simplify technology so you can focus on what matters — running
           your business. Websites, tools, and automations at prices that
-          make sense. 15 years of experience, now focused entirely on
-          helping you.
+          make sense.
         </p>
 
         {/* ── Dashed divider ─────────────────────────────────────────── */}
         <div
-          className="animate-hero-enter hero-delay-4 mx-auto mb-10 max-w-sm border-t-2 border-dashed border-text-subtle/30"
+          className="animate-hero-enter hero-delay-4 mx-auto mb-6 md:mb-10 max-w-sm border-t-2 border-dashed border-text-subtle/30"
           aria-hidden="true"
         />
 
         {/* ── CTA button ─────────────────────────────────────────────── */}
-        <div className="animate-hero-enter hero-delay-5">
+        <div id="hero-cta" className="animate-hero-enter hero-delay-5">
           <Button href={BOOKING_URL} variant="primary">
             Book a 20-min chat
           </Button>
