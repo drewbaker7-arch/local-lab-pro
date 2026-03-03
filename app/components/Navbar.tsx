@@ -58,7 +58,7 @@ export function Navbar() {
      * - border-b border-border: uses the cream-toned border token
      *   so the separator reads as texture, not a hard line.
      */
-    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-border bg-cream/80 backdrop-blur-md">
+    <nav className="fixed top-[var(--ticker-height)] right-0 left-0 z-50 border-b border-border bg-cream/80 backdrop-blur-md">
       {/* ── Desktop bar ─────────────────────────────────────────────────── */}
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-8">
 
@@ -100,7 +100,7 @@ export function Navbar() {
            * so it does not overpower the nav bar proportions.
            */}
           <Button href={BOOKING_URL} variant="primary" className="px-6 py-2.5 text-sm">
-            Book 30 Minutes
+            Book 20 Minutes
           </Button>
         </div>
 
@@ -189,7 +189,7 @@ export function Navbar() {
               variant="primary"
               className="w-full text-center"
             >
-              Book 30 Minutes
+              Book 20 Minutes
             </Button>
           </div>
         </div>

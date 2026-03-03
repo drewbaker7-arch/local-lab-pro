@@ -17,6 +17,7 @@
  * Adding or reordering sections means editing only this file.
  */
 
+import { AnnouncementTicker } from "./components/AnnouncementTicker";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Marquee } from "./components/Marquee";
@@ -30,6 +31,9 @@ import { Footer } from "./components/Footer";
 export default function Home() {
   return (
     <>
+      {/* Announcement ticker — fixed at the very top, above the navbar */}
+      <AnnouncementTicker />
+
       {/* Sticky navigation — rendered outside <main> so it overlays all sections */}
       <Navbar />
 

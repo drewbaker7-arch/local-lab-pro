@@ -16,7 +16,7 @@
  * - Click image to open lightbox
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 
 /* ─── Animation variants ──────────────────────────────────────────────── */
@@ -70,24 +70,34 @@ const PROJECTS: PortfolioItem[] = [
     image: "/images/portfolio/restaurant.webp",
   },
   {
-    title: "Excavation Contractor",
+    title: "Contractor",
     description: "Full business site with quote requests",
-    image: "/images/portfolio/excavation-contractor.webp",
+    image: "/images/portfolio/contractor.webp",
   },
   {
-    title: "Med Spa",
-    description: "Booking system with service showcase",
-    image: "/images/portfolio/med-spa.webp",
+    title: "E-Commerce",
+    description: "Online storefront with product catalog",
+    image: "/images/portfolio/e-commerce.webp",
   },
   {
-    title: "Insurance Automation",
-    description: "Policy loss-run request portal",
-    image: "/images/portfolio/insurance-automation.webp",
+    title: "Lead Generation",
+    description: "High-converting landing page & funnel",
+    image: "/images/portfolio/lead-generation.webp",
   },
   {
-    title: "Dentist Office",
+    title: "Dr Office",
     description: "Patient portal with appointment booking",
-    image: "/images/portfolio/dentist.webp",
+    image: "/images/portfolio/dr-office.webp",
+  },
+  {
+    title: "Professional Agent",
+    description: "Agent portfolio with client dashboard",
+    image: "/images/portfolio/professional-agent.webp",
+  },
+  {
+    title: "Sales Landing Page",
+    description: "Conversion-optimized product launch page",
+    image: "/images/portfolio/sales-landing-page.webp",
   },
 ];
 
@@ -181,21 +191,56 @@ function Lightbox({
 
 /* ─── Component ───────────────────────────────────────────────────────── */
 
+/** Auto-scroll interval in milliseconds. */
+const AUTO_SCROLL_MS = 5000;
+
 export function Portfolio() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [lightboxProject, setLightboxProject] = useState<PortfolioItem | null>(null);
 
+  /* Timer ref — cleared on manual interaction, restarted after pause. */
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const closeLightbox = useCallback(() => setLightboxProject(null), []);
 
   const project = PROJECTS[currentIndex];
 
+  /** Start (or restart) the auto-scroll interval. */
+  const startAutoScroll = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setDirection(1);
+      setCurrentIndex((prev) => (prev + 1) % PROJECTS.length);
+    }, AUTO_SCROLL_MS);
+  }, []);
+
+  /** Stop auto-scroll (called on manual navigation). */
+  const stopAutoScroll = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  /* Kick off auto-scroll on mount, clean up on unmount. */
+  useEffect(() => {
+    startAutoScroll();
+    return () => stopAutoScroll();
+  }, [startAutoScroll, stopAutoScroll]);
+
+  /**
+   * Manual navigation — advances the carousel and resets the auto-scroll
+   * timer so the 5-second countdown restarts from the moment of interaction.
+   */
   function navigate(dir: number) {
     setDirection(dir);
     setCurrentIndex((prev) => {
       const len = PROJECTS.length;
       return (prev + dir + len) % len;
     });
+    /* Reset the timer so we don't auto-advance immediately after a click. */
+    startAutoScroll();
   }
 
   return (

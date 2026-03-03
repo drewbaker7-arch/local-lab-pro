@@ -34,7 +34,7 @@ export function Hero() {
      * - pt-36 md:pt-44: clears fixed navbar (64px) plus breathing room.
      * - pb-20 md:pb-28: transitions cleanly into the first cream card.
      */
-    <section className="noise-overlay relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28">
+    <section className="noise-overlay relative overflow-hidden pt-44 pb-20 md:pt-52 md:pb-28">
 
       {/* ── Decorative: radial gradient top shade ──────────────────────── */}
       {/*
@@ -129,7 +129,7 @@ export function Hero() {
         {/* ── CTA button ─────────────────────────────────────────────── */}
         <div className="animate-hero-enter hero-delay-5">
           <Button href={BOOKING_URL} variant="primary">
-            Book a 30-min chat
+            Book a 20-min chat
           </Button>
         </div>
       </div>

@@ -57,6 +57,9 @@
   /* ── Borders ── */
   --border: #f0eeeb;         /* light cream border for cards on cream bg */
   --border-strong: #e8e4df;  /* slightly stronger border for emphasis */
+
+  /* ── Announcement ticker bar height — referenced by navbar and hero ── */
+  --ticker-height: 32px;
 }
 
 /* ─── Tailwind v4 @theme inline ─────────────────────────────────────────── */
@@ -177,6 +180,22 @@ body {
 .hero-delay-3 { animation-delay: 0.35s; }
 .hero-delay-4 { animation-delay: 0.5s; }
 .hero-delay-5 { animation-delay: 0.65s; }
+
+/*
+ * ticker — continuous horizontal scroll from right to left.
+ * Translates the content strip by 50% of its own width, then resets.
+ * With 8 repeated segments the first and second halves are identical,
+ * so the -50% shift creates a seamless infinite loop. 30s duration
+ * produces a comfortable, readable scrolling speed.
+ */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}
 
 /* ─── Noise texture overlay ──────────────────────────────────────────────── */
 /*

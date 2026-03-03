@@ -18,7 +18,7 @@ import { Button } from "./ui/Button";
 
 /** Confidence-building checklist items for the CTA section. */
 const CTA_ITEMS = [
-  "Free 30-minute consultation",
+  "Free 20-minute consultation",
   "No contracts — cancel anytime",
   "Sites live in under 2 weeks",
   "Affordable monthly plans",
@@ -106,11 +106,11 @@ export function Footer() {
                 Ready to get started?
               </h2>
               <p className="mb-8 max-w-md font-body text-lg leading-relaxed text-text-muted">
-                Book a free 30-minute call. No pressure, no pitch — just a
+                Book a free 20-minute call. No pressure, no pitch — just a
                 conversation about what you need.
               </p>
               <Button variant="accent" href={BOOKING_URL} className="px-10 py-4 text-base">
-                Book 30 Minutes With Me
+                Book 20 Minutes With Me
               </Button>
             </div>
 

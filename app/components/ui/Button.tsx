@@ -1,7 +1,9 @@
+"use client";
+
 /**
  * Button — LocalLab.pro UI Primitive
  *
- * A pill-shaped anchor-link button with three variants:
+ * A pill-shaped button with three variants:
  *
  * "primary"    — dark near-black (#121212) with off-white text.
  *                Used for the main CTA. Sits confidently on both the
@@ -19,12 +21,14 @@
  * All variants use a rounded-full shape (pill) which reads as
  * friendly and approachable — consistent with the workshop aesthetic.
  *
- * Design decisions:
- * - Transition on background-color only (not transform) — avoids layout
- *   jank on hover and keeps interactions lightweight.
- * - font-heading used intentionally: Bricolage Grotesque gives CTAs
- *   a slightly more distinctive voice than the body copy.
+ * Booking integration:
+ * When href matches BOOKING_URL ("#book"), the button opens the
+ * BookingProvider modal instead of navigating away. This keeps
+ * visitors on the site while they schedule a call.
  */
+
+import { BOOKING_URL } from "../../lib/constants";
+import { useBooking } from "../BookingProvider";
 
 interface ButtonProps {
   /** Visual treatment. Defaults to "primary". */
@@ -42,6 +46,8 @@ export function Button({
   children,
   className = "",
 }: ButtonProps) {
+  const { openBooking } = useBooking();
+
   /*
    * Base styles shared by all variants:
    * - inline-flex + items-center: horizontally centers icon + text combos
@@ -60,34 +66,31 @@ export function Button({
    * Hover states shift by one step — predictable, accessible feedback.
    */
   const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
-    /*
-     * Primary: near-black bg (#121212 = bg-charcoal), off-white text.
-     * Strong contrast on cream or blue backgrounds.
-     * Hover shifts to a slightly softer black for a tactile feel.
-     */
-    primary:
-      "bg-charcoal text-text-on-dark hover:bg-[#1e1e1e]",
-
-    /*
-     * Accent: teal bg, white text.
-     * Reserved for the single most important secondary action per view.
-     * Hover darkens to teal-hover (#1f7a6e).
-     */
-    accent:
-      "bg-teal text-white hover:bg-teal-hover",
-
-    /*
-     * Secondary: transparent bg with a visible border, dark text.
-     * Designed to sit next to a primary button as a softer companion.
-     * On hover, fills with a subtle cream to signal interactivity.
-     * The border uses border-strong for definition on blue canvas.
-     */
+    primary: "bg-charcoal text-text-on-dark hover:bg-[#1e1e1e]",
+    accent: "bg-teal text-white hover:bg-teal-hover",
     secondary:
       "border-2 border-charcoal/20 text-text-primary bg-white/60 backdrop-blur-sm hover:bg-cream hover:border-charcoal/30",
   };
 
+  /**
+   * If this button points to the booking URL, intercept the click
+   * and open the booking modal instead of navigating.
+   */
+  const isBooking = href === BOOKING_URL;
+
+  function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (isBooking) {
+      e.preventDefault();
+      openBooking();
+    }
+  }
+
   return (
-    <a href={href} className={`${base} ${variants[variant]} ${className}`}>
+    <a
+      href={href}
+      onClick={handleClick}
+      className={`${base} ${variants[variant]} ${className}`}
+    >
       {children}
     </a>
   );
